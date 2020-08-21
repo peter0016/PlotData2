@@ -29,9 +29,9 @@ def plot_dfs(keyword,dfs,startdate,enddate):
         
     
 def dropdown_menu(dfs,startdate,enddate):
-    plot_dfs('Beide_Logger',dfs,startdate,enddate)
+    plot_dfs('Alle_Logger',dfs,startdate,enddate)
     w = widgets.Dropdown(
-        options=['Beide_Logger', 'Logger_01', 'Logger_02'],
+        options=['Beide_Logger', 'Logger_01', 'Logger_02', 'Logger_03'],
         description='Darstellung:',
         disabled=False
     )
@@ -136,7 +136,8 @@ def plotdfs_inoneplot(dfs, startdate,enddate):
 
 def getdfs_frommulticsv(ndays,fileend='.txt'):
     urls=["https://uni-wuppertal.sciebo.de/s/0WBFg4RTw4I428O/download?path=%2F&files=",
-          "https://uni-wuppertal.sciebo.de/s/rEFPb7PQd3yTMNV/download?path=%2F&files="]
+          "https://uni-wuppertal.sciebo.de/s/rEFPb7PQd3yTMNV/download?path=%2F&files=",
+          "https://uni-wuppertal.sciebo.de/s/5DnhKrWz5m9w1TL/download?path=%2F&files="]
          
     
     import matplotlib.pyplot as plt
