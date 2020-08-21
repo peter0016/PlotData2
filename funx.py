@@ -129,14 +129,14 @@ def plotdfs_inoneplot(dfs, startdate,enddate):
             dfloc1[col].plot(sharex=plt.gca(),
                 color=colortable[i],marker='|',label=col,grid=True,linestyle=None,alpha=0.25)
             dfloc2[col].plot(sharex=plt.gca(),
-                color=colortable[i],marker='|',label=col,grid=True,linestyle=None,alpha=0.25)
+                color=colortable[i],marker='|',label=col,grid=True,linestyle=None,alpha=0.4)
         #plt.legend(loc="lower left")
         #
         #plt.legend(('string1','string2'),loc="lower left")
         #print(str(dfloc0.columns[i])+' Logger_01')
         plt.legend((str(dfloc0.columns[i])+' L01',
                       str(dfloc1.columns[i])+' L02',
-                       str(dfloc1.columns[i])+' L02'),loc="lower left")
+                       str(dfloc2.columns[i])+' L03'),loc="lower left")
 
 def getdfs_frommulticsv(ndays,fileend='.txt'):
     urls=["https://uni-wuppertal.sciebo.de/s/0WBFg4RTw4I428O/download?path=%2F&files=",
