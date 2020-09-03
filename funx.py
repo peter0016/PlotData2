@@ -127,9 +127,9 @@ def plotdfs_inoneplot(dfs, startdate,enddate):
             dfloc0[col].plot(sharex=plt.gca(),
                 color=colortable[i],marker='|',label=col,grid=True,linestyle=None)
             dfloc1[col].plot(sharex=plt.gca(),
-                color=colortable[i],marker='|',label=col,grid=True,linestyle=None,alpha=0.25)
+                color=colortable[i+1],marker='|',label=col,grid=True,linestyle=None)
             dfloc2[col].plot(sharex=plt.gca(),
-                color=colortable[i],marker='|',label=col,grid=True,linestyle=None,alpha=0.4)
+                color=colortable[i+2],marker='|',label=col,grid=True,linestyle=None)
         #plt.legend(loc="lower left")
         #
         #plt.legend(('string1','string2'),loc="lower left")
