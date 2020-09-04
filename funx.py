@@ -22,6 +22,8 @@ def plot_dfs(keyword,dfs,startdate,enddate):
         plotdf(dfs[0],startdate,enddate,keyword)
     elif keyword[-1]=="2":
         plotdf(dfs[1],startdate,enddate,keyword)
+    elif keyword[-1]=="3":
+        plotdf(dfs[2],startdate,enddate,keyword)
     else:
         plotdfs_inoneplot(dfs,startdate,enddate)
     plt.savefig('Export/'+keyword+'.png',dpi=300)        
@@ -31,7 +33,7 @@ def plot_dfs(keyword,dfs,startdate,enddate):
 def dropdown_menu(dfs,startdate,enddate):
     plot_dfs('Alle_Logger',dfs,startdate,enddate)
     w = widgets.Dropdown(
-        options=['Beide_Logger', 'Logger_01', 'Logger_02', 'Logger_03'],
+        options=['Alle_Logger', 'Logger_01', 'Logger_02', 'Logger_03'],
         description='Darstellung:',
         disabled=False
     )
@@ -80,7 +82,7 @@ def plotdf(df, startdate,enddate,title):
     
 
         
-def plotdfs(dfs, startdate,enddate):
+def plotdfs_(dfs, startdate,enddate):
      
     plt.rcParams['figure.figsize'] = [15,15] 
     plt.rcParams['figure.dpi'] = 200
@@ -107,7 +109,8 @@ def plotdfs_inoneplot(dfs, startdate,enddate):
      
     plt.rcParams['figure.figsize'] = [15,15] 
     plt.rcParams['figure.dpi'] = 200
-    colortable=['indigo','purple', 'darkslategrey', 'maroon', 'darkolivegreen', 'black','indigo','purple', 'darkslategrey', 'maroon', 'darkolivegreen', 'black' ]
+    #colortable=['indigo','purple', 'darkslategrey', 'maroon', 'darkolivegreen', 'black','indigo','purple', 'darkslategrey', 'maroon', 'darkolivegreen', 'black' ]
+    colortable=['b','g', 'r', 'c', 'm', 'y', 'k', 'b', 'g', 'r', 'c', 'm', 'y', 'k']
     #for df in dfs:
     #df.head()
     dfloc0=dfs[0].loc[startdate:enddate]
@@ -119,17 +122,19 @@ def plotdfs_inoneplot(dfs, startdate,enddate):
     for i, col in enumerate(dfloc0.columns):
         plt.subplot(dflen,1,i+1)
     #print(col.find('_p'))
-        if col.find('_p')==-1:
-            dfloc0[col].plot(sharex=plt.gca(),color=colortable[i],label=col,linewidth=1,grid=True)
-            dfloc1[col].plot(sharex=plt.gca(),color=colortable[i],label=col,linewidth=1,grid=True,alpha=0.25)
-            dfloc2[col].plot(sharex=plt.gca(),color=colortable[i],label=col,linewidth=1,grid=True,alpha=0.4)
-        else:          
+#        if col.find('_p')==-1:
+#            dfloc0[col].plot(sharex=plt.gca(),color=colortable[i],label=col,linewidth=1,grid=True)
+#            dfloc1[col].plot(sharex=plt.gca(),color=colortable[i],label=col,linewidth=1,grid=True,alpha=0.25)
+#            dfloc2[col].plot(sharex=plt.gca(),color=colortable[i],label=col,linewidth=1,grid=True,alpha=0.4)
+        try:          
             dfloc0[col].plot(sharex=plt.gca(),
-                color=colortable[i],marker='|',label=col,grid=True,linestyle=None)
+                color=colortable[0],label=col,grid=True,linewidth=1)
             dfloc1[col].plot(sharex=plt.gca(),
-                color=colortable[i+1],marker='|',label=col,grid=True,linestyle=None)
+                color=colortable[1],label=col,grid=True,linewidth=1)
             dfloc2[col].plot(sharex=plt.gca(),
-                color=colortable[i+2],marker='|',label=col,grid=True,linestyle=None)
+                color=colortable[2],label=col,grid=True,linewidth=1)
+        except:
+            print('plot raised an exception')
         #plt.legend(loc="lower left")
         #
         #plt.legend(('string1','string2'),loc="lower left")
@@ -150,10 +155,11 @@ def getdfs_frommulticsv(ndays,fileend='.txt'):
     import pandas as pd
     #import datetime as dt
     dfs=[]
-    
+    k=1
     for url in urls:
           
         df= pd.DataFrame([])
+        
         i=0
         while i<ndays:
             datestr=(dt.datetime.today()-dt.timedelta(days=i)).strftime('%Y%m%d')
@@ -165,7 +171,7 @@ def getdfs_frommulticsv(ndays,fileend='.txt'):
                 df=df.append(dfi)
                     
             except:
-                print(fname+' not found on File Server')
+                print("Logger0" +str(k)+" "+fname+' not found on File Server')
             i+=1
         df[0] = pd.to_datetime(df[0],format="%d.%m.%Y %H:%M:%S")
         del df[8]
@@ -178,6 +184,7 @@ def getdfs_frommulticsv(ndays,fileend='.txt'):
         df=df.loc[df.index.notnull()]
         df=df.sort_index()
         dfs.append(df)
+        k+=1
     return(dfs)
 
 
