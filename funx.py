@@ -113,40 +113,44 @@ def plotdfs_inoneplot(dfs, startdate,enddate):
     colortable=['b','g', 'r', 'c', 'm', 'y', 'k', 'b', 'g', 'r', 'c', 'm', 'y', 'k']
     #for df in dfs:
     #df.head()
-    dfloc0=dfs[0].loc[startdate:enddate]
-    dfloc1=dfs[1].loc[startdate:enddate]
-    dfloc2=dfs[2].loc[startdate:enddate]
-    dflen=len(dfloc0.columns)
+    
+    #dfloc0=dfs[0].loc[startdate:enddate]
+    #dfloc1=dfs[1].loc[startdate:enddate]
+    #dfloc2=dfs[2].loc[startdate:enddate]
+    
+    dfloc=[df.loc[startdate:enddate] for df in dfs if len(df)>2]
+    dfplotindex=[ i for i, df in enumerate(dfs) if len(df)>2]
+       
+    dflen=len(dfloc[0].columns)
     fig, ax=plt.subplots(dflen)
-    #ax.grid(which='minor', linestyle=':', linewidth='0.5', color='black')
-    for i, col in enumerate(dfloc0.columns):
+      
+    for i, col in enumerate(dfloc[0].columns):
         plt.subplot(dflen,1,i+1)
-    #print(col.find('_p'))
-#        if col.find('_p')==-1:
-#            dfloc0[col].plot(sharex=plt.gca(),color=colortable[i],label=col,linewidth=1,grid=True)
-#            dfloc1[col].plot(sharex=plt.gca(),color=colortable[i],label=col,linewidth=1,grid=True,alpha=0.25)
-#            dfloc2[col].plot(sharex=plt.gca(),color=colortable[i],label=col,linewidth=1,grid=True,alpha=0.4)
-        try:          
-            dfloc0[col].plot(sharex=plt.gca(),
-                color=colortable[0],label=col,grid=True,linewidth=1)
-            dfloc1[col].plot(sharex=plt.gca(),
-                color=colortable[1],label=col,grid=True,linewidth=1)
-            dfloc2[col].plot(sharex=plt.gca(),
-                color=colortable[2],label=col,grid=True,linewidth=1)
+        try:
+            colorindex=1
+            loggerindex=0
+            names=[]
+            for df in dfloc:
+                df[col].plot(sharex=plt.gca(),
+                color=colortable[colorindex],label=col,grid=True,linewidth=1)
+                names.append(str(col)+' L0'+ str(dfplotindex[loggerindex]+1))
+                colorindex+=1
+                loggerindex+=1
+            
+            #print(names)
+            plt.legend(tuple(names),loc="lower left")   
+                
         except:
             print('plot raised an exception')
-        #plt.legend(loc="lower left")
-        #
-        #plt.legend(('string1','string2'),loc="lower left")
-        #print(str(dfloc0.columns[i])+' Logger_01')
-        plt.legend((str(dfloc0.columns[i])+' L01',
-                      str(dfloc1.columns[i])+' L02',
-                       str(dfloc2.columns[i])+' L03'),loc="lower left")
+        
 
 def getdfs_frommulticsv(ndays,fileend='.txt'):
     urls=["https://uni-wuppertal.sciebo.de/s/0WBFg4RTw4I428O/download?path=%2F&files=",
           "https://uni-wuppertal.sciebo.de/s/rEFPb7PQd3yTMNV/download?path=%2F&files=",
           "https://uni-wuppertal.sciebo.de/s/5DnhKrWz5m9w1TL/download?path=%2F&files="]
+    #urls=[#"https://uni-wuppertal.sciebo.de/s/rEFPb7PQd3yTMNV/download?path=%2F&files="]
+          #"https://uni-wuppertal.sciebo.de/s/5DnhKrWz5m9w1TL/download?path=%2F&files="]
+    #print(urls)
          
     
     import matplotlib.pyplot as plt
@@ -157,33 +161,37 @@ def getdfs_frommulticsv(ndays,fileend='.txt'):
     dfs=[]
     k=1
     for url in urls:
-          
         df= pd.DataFrame([])
-        
         i=0
         while i<ndays:
             datestr=(dt.datetime.today()-dt.timedelta(days=i)).strftime('%Y%m%d')
             fname=datestr+fileend
             filelink=url+fname
+            #print(filelink)
             try:
-                #print(filelink)
                 dfi=pd.read_csv(filelink,index_col=None, sep=';',header=None)
                 df=df.append(dfi)
-                    
             except:
                 print("Logger0" +str(k)+" "+fname+' not found on File Server')
+                if i ==ndays-1 and len(df)==0:
+                    df=pd.DataFrame({ 0: ['11.11.1999 11:11:11'] , 1 : [-1], 2 : [-1], 3 : [-1], 4 : [-1],    5:[-1], 6 : [-1],7 : [-1],8:[-1]})
+                    
             i+=1
-        df[0] = pd.to_datetime(df[0],format="%d.%m.%Y %H:%M:%S")
-        del df[8]
-        df[3][df[2]<100]=np.NaN #conditional set values to NaN
-        df[2][df[2]<100]=np.NaN
-        df[1][df[2]<100]=np.NaN
-        df[1][df[1]<0]=np.NaN
-        df.columns = ['date','r1min','mabs','rsum','T','H','p','U']
-        df.set_index('date', inplace=True)
-        df=df.loc[df.index.notnull()]
-        df=df.sort_index()
-        dfs.append(df)
+        
+        if len(df)>0:
+            df[0] = pd.to_datetime(df[0],format="%d.%m.%Y %H:%M:%S")
+            del df[8]
+            df[3][df[2]<100]=np.NaN #conditional set values to NaN
+            df[2][df[2]<100]=np.NaN
+            df[1][df[2]<100]=np.NaN
+            df[1][df[1]<0]=np.NaN
+            df.columns = ['date','r1min','mabs','rsum','T','H','p','U']
+            df.set_index('date', inplace=True)
+            df=df.loc[df.index.notnull()]
+            df=df.sort_index()
+            dfs.append(df)
+        
+            
         k+=1
     return(dfs)
 
